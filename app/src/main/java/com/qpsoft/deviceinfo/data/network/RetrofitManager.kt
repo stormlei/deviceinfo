@@ -26,7 +26,7 @@ object RetrofitManager {
 
     private fun initRetrofit(): Retrofit {
         retrofit = Retrofit.Builder()
-            .baseUrl("http://192.168.0.136:8080")
+            .baseUrl("http://192.168.0.138:8080")
             .client(okHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
             .build()

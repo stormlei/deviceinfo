@@ -6,10 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.TextView
 import com.blankj.utilcode.util.CacheDiskStaticUtils
 import com.blankj.utilcode.util.LogUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.clj.fastble.data.BleDevice
 import com.qpsoft.deviceinfo.R
 import com.qpsoft.deviceinfo.data.model.DeviceInfo
@@ -20,8 +24,11 @@ class MainFragment : Fragment() {
     companion object {
         fun newInstance(bleDevice: BleDevice?): MainFragment {
             val args = Bundle()
-            args.putString("btMac", bleDevice?.mac)
-            args.putString("btName", bleDevice?.name)
+            if (bleDevice != null) {
+                args.putString("btMac", bleDevice.mac)
+                args.putString("btName", bleDevice.name)
+                args.putString("networkMac", String(bleDevice.scanRecord))
+            }
             val fragment = MainFragment()
             fragment.arguments = args
             return fragment
@@ -45,7 +52,11 @@ class MainFragment : Fragment() {
         }
         viewModel.deviceInfoLiveData.observe(this@MainFragment) {
             //提交成功,清除填写框
-            view?.findViewById<TextView>(R.id.tvSubmit)!!.isEnabled = true
+            ToastUtils.showShort("录入成功")
+            view?.findViewById<EditText>(R.id.edtBleMac)?.setText("")
+            view?.findViewById<EditText>(R.id.edtBleName)?.setText("")
+            view?.findViewById<EditText>(R.id.edtSn)?.setText("")
+            view?.findViewById<EditText>(R.id.edtNetworkMac)?.setText("")
         }
     }
 
@@ -67,20 +78,48 @@ class MainFragment : Fragment() {
     private fun handleUI() {
         val btMac = arguments?.getString("btMac")
         val btName = arguments?.getString("btName")
+        val networkMac = arguments?.getString("networkMac")
         val edtBleMac = view?.findViewById<EditText>(R.id.edtBleMac)
         val edtBleName = view?.findViewById<EditText>(R.id.edtBleName)
+        val edtNetworkMac = view?.findViewById<EditText>(R.id.edtNetworkMac)
         edtBleMac?.setText(btMac)
         edtBleName?.setText(btName)
+        if (networkMac?.contains("QP01") == true){
+            val pos = networkMac.indexOf("QP01")+4
+            if (networkMac.length > pos + 18) edtNetworkMac?.setText(networkMac.substring(pos, pos+18))
+        }
+
+
+        var category = ""
+        var brand = ""
+        var model = ""
+        val spinnerCategory = view?.findViewById<Spinner>(R.id.spinnerCategory)
+        val spinnerBrand = view?.findViewById<Spinner>(R.id.spinnerBrand)
+        val spinnerModel = view?.findViewById<Spinner>(R.id.spinnerModel)
+        spinnerCategory?.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+                category = resources.getStringArray(R.array.category)[pos]
+            }
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+        }
+        spinnerBrand?.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+                brand = resources.getStringArray(R.array.brand)[pos]
+            }
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+        }
+        spinnerModel?.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+                model = resources.getStringArray(R.array.model)[pos]
+            }
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+        }
 
         view?.findViewById<TextView>(R.id.tvSubmit)?.setOnClickListener {
-            view?.findViewById<TextView>(R.id.tvSubmit)!!.isEnabled = false
-            val category = view?.findViewById<EditText>(R.id.edtCategory)?.text.toString().trim()
-            val brand = view?.findViewById<EditText>(R.id.edtBrand)?.text.toString().trim()
-            val model = view?.findViewById<EditText>(R.id.edtModel)?.text.toString().trim()
             val bleMac = edtBleMac?.text.toString().trim()
             val bleName = edtBleName?.text.toString().trim()
             val sn = view?.findViewById<EditText>(R.id.edtSn)?.text.toString().trim()
-            val networkMac = view?.findViewById<EditText>(R.id.edtNetworkMac)?.text.toString().trim()
+            val networkMac = edtNetworkMac?.text.toString().trim()
             val deviceInfo = DeviceInfo(category, brand, model, bleMac, bleName, sn, networkMac)
             viewModel.submitDeviceInfo(deviceInfo)
         }

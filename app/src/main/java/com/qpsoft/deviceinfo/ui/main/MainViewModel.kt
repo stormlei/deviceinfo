@@ -18,7 +18,7 @@ import retrofit2.Response
 
 class MainViewModel : ViewModel() {
     var loginOkLiveData = MutableLiveData<Boolean>()
-    val deviceInfoLiveData = MutableLiveData<Any>()
+    val deviceInfoLiveData = MutableLiveData<Boolean>()
 
     fun checkLogin() {
         val token = CacheDiskStaticUtils.getString(Keys.TOKEN)
@@ -36,18 +36,18 @@ class MainViewModel : ViewModel() {
             bodyMap["deviceSn"] = deviceInfo.deviceSn
             bodyMap["networkMac"] = deviceInfo.networkMac
             val result = RetrofitManager.apiService().deviceInfo(bodyMap)
-            result.enqueue(object : Callback<Any> {
-                override fun onResponse(call: Call<Any>, response: Response<Any>) {
+            result.enqueue(object : Callback<ResultRes<DeviceInfo>> {
+                override fun onResponse(call: Call<ResultRes<DeviceInfo>>, response: Response<ResultRes<DeviceInfo>>) {
                     if (response.isSuccessful) {
-                        val resultRes = GsonUtils.fromJson<ResultRes<String>>(response.body().toString(), ResultRes::class.java)
-                        deviceInfoLiveData.value = resultRes
+                        val deviceInfoRes = response.body()?.data
+                        deviceInfoLiveData.value = deviceInfoRes != null
                     } else {
                         val resultRes = GsonUtils.fromJson<ResultRes<Any>>(response.errorBody()?.charStream()?.readText(), ResultRes::class.java)
                         ToastUtils.showShort(resultRes.message)
                     }
                 }
 
-                override fun onFailure(call: Call<Any>, t: Throwable) {
+                override fun onFailure(call: Call<ResultRes<DeviceInfo>>, t: Throwable) {
                     ToastUtils.showShort(t.message)
                 }
 

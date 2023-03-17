@@ -80,7 +80,7 @@ class BtFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PermissionUtils.permission(
                 Manifest.permission.BLUETOOTH_ADVERTISE, Manifest.permission.BLUETOOTH_CONNECT,
-                Manifest.permission.BLUETOOTH_SCAN)
+                Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
                 .callback(object : PermissionUtils.SimpleCallback {
                     override fun onGranted() {
                         BleDeviceOpUtil.openBle()

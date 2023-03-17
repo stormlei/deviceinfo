@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="category">
+        <item>验光仪</item>
+        <item>生物测量仪</item>
+        <item>眼压计</item>
+        <item>身高体重秤</item>
+        <item>视力表</item>
+        <item>血压计</item>
+        <item>肺活量</item>
+        <item>焦度计</item>
+        <item>角膜内皮镜</item>
+    </string-array>
+
+    <string-array name="brand">
+        <item>轻派</item>
+        <item>鱼跃</item>
+    </string-array>
+
+    <string-array name="model">
+        <item>HC-08</item>
+        <item>K238-AZ</item>
+        <item>YE900</item>
+    </string-array>
+
+</resources>
