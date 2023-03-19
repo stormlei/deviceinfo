@@ -27,6 +27,7 @@ class MainFragment : Fragment() {
             if (bleDevice != null) {
                 args.putString("btMac", bleDevice.mac)
                 args.putString("btName", bleDevice.name)
+                args.putString("deviceSn", bleDevice.name)
                 args.putString("networkMac", String(bleDevice.scanRecord))
             }
             val fragment = MainFragment()
@@ -55,7 +56,7 @@ class MainFragment : Fragment() {
             ToastUtils.showShort("录入成功")
             view?.findViewById<EditText>(R.id.edtBleMac)?.setText("")
             view?.findViewById<EditText>(R.id.edtBleName)?.setText("")
-            view?.findViewById<EditText>(R.id.edtSn)?.setText("")
+            view?.findViewById<EditText>(R.id.edtDeviceSn)?.setText("")
             view?.findViewById<EditText>(R.id.edtNetworkMac)?.setText("")
         }
     }
@@ -78,14 +79,17 @@ class MainFragment : Fragment() {
     private fun handleUI() {
         val btMac = arguments?.getString("btMac")
         val btName = arguments?.getString("btName")
+        val deviceSn = arguments?.getString("deviceSn")
         val networkMac = arguments?.getString("networkMac")
         val edtBleMac = view?.findViewById<EditText>(R.id.edtBleMac)
         val edtBleName = view?.findViewById<EditText>(R.id.edtBleName)
+        val edtDeviceSn = view?.findViewById<EditText>(R.id.edtDeviceSn)
         val edtNetworkMac = view?.findViewById<EditText>(R.id.edtNetworkMac)
         edtBleMac?.setText(btMac)
         edtBleName?.setText(btName)
-        if (networkMac?.contains("QP01") == true){
-            val pos = networkMac.indexOf("QP01")+4
+        edtDeviceSn?.setText(deviceSn)
+        if (networkMac?.contains("QP") == true){
+            val pos = networkMac.indexOf("QP")+2
             if (networkMac.length > pos + 18) edtNetworkMac?.setText(networkMac.substring(pos, pos+18))
         }
 
@@ -118,9 +122,9 @@ class MainFragment : Fragment() {
         view?.findViewById<TextView>(R.id.tvSubmit)?.setOnClickListener {
             val bleMac = edtBleMac?.text.toString().trim()
             val bleName = edtBleName?.text.toString().trim()
-            val sn = view?.findViewById<EditText>(R.id.edtSn)?.text.toString().trim()
+            val deviceSn = edtDeviceSn?.text.toString().trim()
             val networkMac = edtNetworkMac?.text.toString().trim()
-            val deviceInfo = DeviceInfo(category, brand, model, bleMac, bleName, sn, networkMac)
+            val deviceInfo = DeviceInfo(category, brand, model, bleMac, bleName, deviceSn, networkMac)
             viewModel.submitDeviceInfo(deviceInfo)
         }
 
