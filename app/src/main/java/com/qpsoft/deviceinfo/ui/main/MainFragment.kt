@@ -88,8 +88,8 @@ class MainFragment : Fragment() {
         val edtNetworkMac = view?.findViewById<EditText>(R.id.edtNetworkMac)
         edtBtMac?.setText(btMac)
         edtBtName?.setText(btName)
-        edtDeviceSn?.setText(deviceSn)
         if (networkMac?.contains("QP") == true){
+            edtDeviceSn?.setText(deviceSn)
             val pos = networkMac.indexOf("QP")+2
             if (networkMac.length > pos + 18) edtNetworkMac?.setText(networkMac.substring(pos, pos+18))
         }
