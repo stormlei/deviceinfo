@@ -26,7 +26,7 @@ object RetrofitManager {
 
     private fun initRetrofit(): Retrofit {
         retrofit = Retrofit.Builder()
-            .baseUrl("http://192.168.0.138:8080")
+            .baseUrl("https://datagatherv3.qingpai365.com/api/")
             .client(okHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
             .build()

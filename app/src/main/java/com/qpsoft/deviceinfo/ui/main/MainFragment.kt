@@ -2,6 +2,7 @@ package com.qpsoft.deviceinfo.ui.main
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.text.TextUtils
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -54,8 +55,8 @@ class MainFragment : Fragment() {
         viewModel.deviceInfoLiveData.observe(this@MainFragment) {
             //提交成功,清除填写框
             ToastUtils.showShort("录入成功")
-            view?.findViewById<EditText>(R.id.edtBleMac)?.setText("")
-            view?.findViewById<EditText>(R.id.edtBleName)?.setText("")
+            view?.findViewById<EditText>(R.id.edtBtMac)?.setText("")
+            view?.findViewById<EditText>(R.id.edtBtName)?.setText("")
             view?.findViewById<EditText>(R.id.edtDeviceSn)?.setText("")
             view?.findViewById<EditText>(R.id.edtNetworkMac)?.setText("")
         }
@@ -81,12 +82,12 @@ class MainFragment : Fragment() {
         val btName = arguments?.getString("btName")
         val deviceSn = arguments?.getString("deviceSn")
         val networkMac = arguments?.getString("networkMac")
-        val edtBleMac = view?.findViewById<EditText>(R.id.edtBleMac)
-        val edtBleName = view?.findViewById<EditText>(R.id.edtBleName)
+        val edtBtMac = view?.findViewById<EditText>(R.id.edtBtMac)
+        val edtBtName = view?.findViewById<EditText>(R.id.edtBtName)
         val edtDeviceSn = view?.findViewById<EditText>(R.id.edtDeviceSn)
         val edtNetworkMac = view?.findViewById<EditText>(R.id.edtNetworkMac)
-        edtBleMac?.setText(btMac)
-        edtBleName?.setText(btName)
+        edtBtMac?.setText(btMac)
+        edtBtName?.setText(btName)
         edtDeviceSn?.setText(deviceSn)
         if (networkMac?.contains("QP") == true){
             val pos = networkMac.indexOf("QP")+2
@@ -120,11 +121,15 @@ class MainFragment : Fragment() {
         }
 
         view?.findViewById<TextView>(R.id.tvSubmit)?.setOnClickListener {
-            val bleMac = edtBleMac?.text.toString().trim()
-            val bleName = edtBleName?.text.toString().trim()
+            val btMac = edtBtMac?.text.toString().trim()
+            val btName = edtBtName?.text.toString().trim()
             val deviceSn = edtDeviceSn?.text.toString().trim()
             val networkMac = edtNetworkMac?.text.toString().trim()
-            val deviceInfo = DeviceInfo(category, brand, model, bleMac, bleName, deviceSn, networkMac)
+            if (TextUtils.isEmpty(btMac)) {
+                ToastUtils.showShort("蓝牙mac地址不能为空")
+                return@setOnClickListener
+            }
+            val deviceInfo = DeviceInfo(category, brand, model, btMac, btName, deviceSn, networkMac)
             viewModel.submitDeviceInfo(deviceInfo)
         }
 

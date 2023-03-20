@@ -11,6 +11,6 @@ interface ApiService {
     @POST("public/user/v1/login")
     fun login(@Body bodyMap: MutableMap<String, String>): Call<ResultRes<LoginRes>>
 
-    @POST("device/v1/device-info")
+    @POST("info-device/v1/info-device")
     fun deviceInfo(@Body bodyMap: MutableMap<String, String>): Call<ResultRes<DeviceInfo>>
 }
